@@ -1,6 +1,7 @@
 import icons from 'url:../img/icons.svg';
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
+import * as model from './model.js';
 
 const recipeContainer = document.querySelector('.recipe');
 
@@ -35,16 +36,10 @@ const showRecipe = async function (){
     const id = window.location.hash.slice(1);
     if (!id) return
     renderSpinner(recipeContainer);
-    const res = await fetch(`https://forkify-api.jonas.io/api/v2/recipes/${id}`);
-    const data = await res.json();
 
-    console.log(res,data)
-    if (!res.ok) throw new Error(`${data.message} : ${res.status}`)
-
-    let {recipe} = data.data;
-
+    await model.loadRecipe(id);
+    const {recipe} = model.state;
     console.log(recipe);
-
     const markup =
          `<figure class="recipe__fig">
             <img src="${recipe.image_url}" alt="${recipe.title}" class="recipe__img" />
